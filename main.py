@@ -1,10 +1,12 @@
 import vlf
 import vlf.engine as e
+import math
 import pymunk
 
-FPS = 30
 
-WF = 0.15
+FPS = 30
+WF = 1000000
+SIMUL_LEN = 1
 
 field = e.Field()
 robot = e.Robot()
@@ -13,7 +15,7 @@ field.add(robot)
 field.step(1)
 field.step(1)
 
-vis = vlf.visualise.Visualisator(fps=FPS)
+vis = vlf.visualise.Visualisator(fps=FPS-20)
 
 def limit_velocity(body, gravity, damping, dt):
     # omg what i have wroten
@@ -22,14 +24,17 @@ def limit_velocity(body, gravity, damping, dt):
 
     lw = body.velocity_at_local_point(lwp).rotated(-body.angle)
     rw = body.velocity_at_local_point(rwp).rotated(-body.angle)
+    print(math.degrees(lw.angle, rw.angle)
+    print(lw, rw)
 
-    if rw.length != 0:
-        rw.length = min(rw.length, WF)
-    if lw.length != 0:
-        lw.length = min(lw.length, WF)
+    #body.apply_force_at_local_point(lw*body.mass*dt, lwp)
+    #body.apply_force_at_local_point(rw*body.mass*dt, rwp)
 
-    body.apply_impulse_at_local_point(lw*body.mass*-1, lwp)
-    body.apply_impulse_at_local_point(rw*body.mass*-1, rwp)
+    print(math.degrees(body.angle))
+    print(math.degrees(body.velocity.angle))
+    
+    a = math.degrees(body.angle)
+    b = math.degrees(body.velocity.angle)
 
     vel = body.velocity.rotated(-body.angle)
     vel.x = 0
@@ -39,15 +44,16 @@ def limit_velocity(body, gravity, damping, dt):
 
 robot.body.velocity_func = limit_velocity
 robot.body.position = (400, 300)
+#robot.simulate_motors(2, -2)
 
-for i in range(int(5*FPS)):
+for i in range(int(SIMUL_LEN*FPS)):
+    robot.simulate_motors(1, 1)
+    #robot.body.angle = math.radians(-i)
     if (i % FPS) == 0:
-        print("SEC OF SIMUL:", i // FPS)
-    if (i // FPS) < 1:
-        robot.simulate_motors(1, -1)
-    else:
-        robot.simulate_motors(-1, 1)
+        pass
+        #print("SEC OF SIMUL:", i // FPS)
     field.step(1/FPS)
     vis.draw_space(field)
     vis.wait()
 print("Finished")
+input()

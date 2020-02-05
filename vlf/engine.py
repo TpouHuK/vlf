@@ -5,7 +5,7 @@ import math
 
 def MEDIUM_MOTOR_TORQUE_RPM_CALC(rpm):
     """Torque in N.cm"""
-    torque = -0.06*rpm + 15
+    torque = (-0.06*rpm + 15)*0.7 #70% of power bcs 7.5 volts
     return max(torque, 0)
 
 def create_offcentered_box(body, width, height, center, mass=None):
@@ -104,14 +104,13 @@ class Robot():
         # Current rpm of motor, can be negative if motor turns backward
         l_rpm = ls / (self.wheel_radius*math.pi) * 60
         r_rpm = rs / (self.wheel_radius*math.pi) * 60
-        print(l_rpm, r_rpm)
 
         # If we trying to brake with motor, then torque_rpm acts like we stalled motor
         # Idk propper calculation for motor braking, so ill go with this
         
         # If l_rpm and l_ts both >0 or <0
         # Else act like we stalled
-        print("rpm", l_rpm, r_rpm)
+        #print("rpm", l_rpm, r_rpm)
         if (l_rpm * l_ts) >= 0:
             l_torq = self.torque_rpm_func(abs(l_rpm))
         else:
@@ -125,7 +124,7 @@ class Robot():
             r_torq = self.torque_rpm_func(0)
             #never()
         r_torq = r_torq * self.wheel_radius * r_ts
-        print("torq", l_torq, r_torq)
+        #print("torq", l_torq, r_torq)
 
         self._apply_motor_force(l_torq, r_torq)
 
