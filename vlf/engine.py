@@ -43,10 +43,10 @@ class Robot():
         self,
         case_width=100,
         case_height=100,
-        case_mass=1,
+        case_mass=0.5,
         wheel_width=50,
         wheel_height=50,
-        wheel_mass=1,
+        wheel_mass=0.3,
         wheel_distance_from_center=100,
             ):
 
@@ -94,5 +94,5 @@ class Robot():
         force_l = (0, l)
         force_r = (0, r)
 
-        self.body.apply_impulse_at_local_point(force_l, apply_point_l)
-        self.body.apply_impulse_at_local_point(force_r, apply_point_r)
+        self.body.apply_force_at_local_point(force_l, apply_point_l)
+        self.body.apply_force_at_local_point(force_r, apply_point_r)

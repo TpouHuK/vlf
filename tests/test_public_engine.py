@@ -44,5 +44,5 @@ def test_movement():
     field.step(dt)
     third_pos = robot.body.position
 
-    assert first_pos == second_pos
+    assert first_pos == second_pos #This assert fails if apply_impulse used in motors
     assert first_pos != third_pos
