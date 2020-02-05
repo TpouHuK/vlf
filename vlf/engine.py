@@ -41,13 +41,13 @@ class Field():
 class Robot():
     def __init__(
         self,
-        case_width=0.05*500,
-        case_height=0.08*500,
-        case_mass=0.03*500,
-        wheel_width=0.01*500,
-        wheel_height=0.09*500,
-        wheel_mass=0.01*500,
-        wheel_distance_from_center=0.05*500,
+        case_width=100,
+        case_height=100,
+        case_mass=1,
+        wheel_width=50,
+        wheel_height=50,
+        wheel_mass=1,
+        wheel_distance_from_center=100,
             ):
 
         self.case_width = case_width
@@ -85,13 +85,14 @@ class Robot():
         """All objects thats need to be added into simulation to create a robot"""
         return self.left_wheel, self.right_wheel, self.case, self.body
 
-    def _apply_motor_force(self, trust):
+    def _apply_motor_force(self, l, r):
         x = self.wheel_distance_from_center
         y = 0
 
         apply_point_l = (-x, y)
         apply_point_r = (+x, y)
-        force = (0, trust)
+        force_l = (0, l)
+        force_r = (0, r)
 
-        self.body.apply_force_at_local_point(force, apply_point_l)
-        self.body.apply_force_at_local_point(force, apply_point_r)
+        self.body.apply_impulse_at_local_point(force_l, apply_point_l)
+        self.body.apply_impulse_at_local_point(force_r, apply_point_r)

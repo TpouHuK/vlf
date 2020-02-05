@@ -34,7 +34,7 @@ def test_movement():
     robot = vlf.engine.Robot()
     
     field.add(robot)
-    robot._apply_motor_force(10)
+    robot._apply_motor_force(10, 10)
 
     first_pos = robot.body.position
     # First step sets velocity
