@@ -57,6 +57,8 @@ class Robot():
         wheel_mass=0.125,
         wheel_distance_from_center=10,
         wheel_radius=9,
+        angular_damping=0.95,
+        velocity_damping=0.95,
         torque_rpm_func=MEDIUM_MOTOR_TORQUE_RPM_CALC,
             ):
 
@@ -85,6 +87,16 @@ class Robot():
                 (0, 0),
                 case_mass)
 
+        def kinda_friction(body, gravity, damping, dt):
+            vel = body.velocity.rotated(-body.angle)
+            vel.x = 0
+            body.velocity = vel.rotated(body.angle)
+            body.angular_velocity *= angular_damping
+            body.velocity *= velocity_damping
+            pk.Body.update_velocity(body, gravity, damping, dt)
+
+        main_body.velocity_func = kinda_friction
+
         self.left_wheel = left_wheel
         self.right_wheel = right_wheel
         self.case = case
@@ -110,7 +122,6 @@ class Robot():
         
         # If l_rpm and l_ts both >0 or <0
         # Else act like we stalled
-        #print("rpm", l_rpm, r_rpm)
         if (l_rpm * l_ts) >= 0:
             l_torq = self.torque_rpm_func(abs(l_rpm))
         else:
@@ -124,7 +135,6 @@ class Robot():
             r_torq = self.torque_rpm_func(0)
             #never()
         r_torq = r_torq * self.wheel_radius * r_ts
-        #print("torq", l_torq, r_torq)
 
         self._apply_motor_force(l_torq, r_torq)
 
@@ -133,6 +143,7 @@ class Robot():
         rwp = (+self.wheel_distance_from_center, 0)
 
         #TODO unsure about this func, check me
+        #UPD Feb5. 2020 idk why but its working fine
         lw = self.body.velocity_at_local_point(lwp).rotated(-self.body.angle)
         rw = self.body.velocity_at_local_point(rwp).rotated(-self.body.angle)
         return lw.y, rw.y
