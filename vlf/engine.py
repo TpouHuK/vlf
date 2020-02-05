@@ -2,6 +2,11 @@
 # Power by pymunk
 import pymunk as pk
 
+def MEDIUM_MOTOR_TORQUE_RPM_CALC(rpm)
+    """Torque in N.cm"""
+    torque = -0.6*rpm + 15
+    return min(torque, 0)
+
 def create_offcentered_box(body, width, height, center, mass=None):
     """Return `pymunk.Poly` rectangle with center at `center`"""
     half_width = width/2
@@ -84,6 +89,14 @@ class Robot():
     def parts(self):
         """All objects thats need to be added into simulation to create a robot"""
         return self.left_wheel, self.right_wheel, self.case, self.body
+
+    def _get_motor_speed(self):
+        lwp = (-robot.wheel_distance_from_center, 0)
+        rwp = (+robot.wheel_distance_from_center, 0)
+
+        lw = body.velocity_at_local_point(lwp).rotated(-body.angle)
+        rw = body.velocity_at_local_point(rwp).rotated(-body.angle)
+    return lw, rw
 
     def _apply_motor_force(self, l, r):
         x = self.wheel_distance_from_center

@@ -15,19 +15,19 @@ vis = vlf.visualise.Visualisator()
 
 def limit_velocity(body, gravity, damping, dt):
     # omg what i have wroten
-    rwp = (+robot.wheel_distance_from_center, 0)
     lwp = (-robot.wheel_distance_from_center, 0)
+    rwp = (+robot.wheel_distance_from_center, 0)
 
-    rw = body.velocity_at_local_point(rwp).rotated(-body.angle)
     lw = body.velocity_at_local_point(lwp).rotated(-body.angle)
+    rw = body.velocity_at_local_point(rwp).rotated(-body.angle)
 
     if rw.length != 0:
         rw.length = min(rw.length, WF)
     if lw.length != 0:
         lw.length = min(lw.length, WF)
 
-    body.apply_impulse_at_local_point(rw*body.mass*-1, rwp)
     body.apply_impulse_at_local_point(lw*body.mass*-1, lwp)
+    body.apply_impulse_at_local_point(rw*body.mass*-1, rwp)
 
     vel = body.velocity.rotated(-body.angle)
     vel.x = 0
