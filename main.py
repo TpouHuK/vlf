@@ -2,6 +2,8 @@ import vlf
 import vlf.engine as e
 import pymunk
 
+FPS = 30
+
 WF = 0.15
 
 field = e.Field()
@@ -11,7 +13,7 @@ field.add(robot)
 field.step(1)
 field.step(1)
 
-vis = vlf.visualise.Visualisator()
+vis = vlf.visualise.Visualisator(fps=FPS)
 
 def limit_velocity(body, gravity, damping, dt):
     # omg what i have wroten
@@ -31,7 +33,6 @@ def limit_velocity(body, gravity, damping, dt):
 
     vel = body.velocity.rotated(-body.angle)
     vel.x = 0
-    print(vel)
     body.velocity = vel.rotated(body.angle)
 
     pymunk.Body.update_velocity(body, gravity, damping, dt)
@@ -39,8 +40,14 @@ def limit_velocity(body, gravity, damping, dt):
 robot.body.velocity_func = limit_velocity
 robot.body.position = (400, 300)
 
-for i in range(1000):
-    vis.wait()
-    robot._apply_motor_force(0.6, 0.5)
-    field.step(1)
+for i in range(int(5*FPS)):
+    if (i % FPS) == 0:
+        print("SEC OF SIMUL:", i // FPS)
+    if (i // FPS) < 1:
+        robot.simulate_motors(1, -1)
+    else:
+        robot.simulate_motors(-1, 1)
+    field.step(1/FPS)
     vis.draw_space(field)
+    vis.wait()
+print("Finished")

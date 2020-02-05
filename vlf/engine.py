@@ -1,11 +1,12 @@
 # Physics engine for virtual line follower
 # Power by pymunk
 import pymunk as pk
+import math
 
-def MEDIUM_MOTOR_TORQUE_RPM_CALC(rpm)
+def MEDIUM_MOTOR_TORQUE_RPM_CALC(rpm):
     """Torque in N.cm"""
-    torque = -0.6*rpm + 15
-    return min(torque, 0)
+    torque = -0.06*rpm + 15
+    return max(torque, 0)
 
 def create_offcentered_box(body, width, height, center, mass=None):
     """Return `pymunk.Poly` rectangle with center at `center`"""
@@ -46,13 +47,17 @@ class Field():
 class Robot():
     def __init__(
         self,
-        case_width=100,
-        case_height=100,
-        case_mass=0.5,
-        wheel_width=50,
-        wheel_height=50,
-        wheel_mass=0.3,
-        wheel_distance_from_center=100,
+        # Distance -> cm
+        # Mass -> kg
+        case_width=7,
+        case_height=11,
+        case_mass=0.4,
+        wheel_width=2,
+        wheel_height=9,
+        wheel_mass=0.125,
+        wheel_distance_from_center=10,
+        wheel_radius=9,
+        torque_rpm_func=MEDIUM_MOTOR_TORQUE_RPM_CALC,
             ):
 
         self.case_width = case_width
@@ -84,19 +89,54 @@ class Robot():
         self.right_wheel = right_wheel
         self.case = case
         self.body = main_body
+        self.torque_rpm_func = torque_rpm_func
+        self.wheel_radius=wheel_radius
 
     @property
     def parts(self):
         """All objects thats need to be added into simulation to create a robot"""
         return self.left_wheel, self.right_wheel, self.case, self.body
 
-    def _get_motor_speed(self):
-        lwp = (-robot.wheel_distance_from_center, 0)
-        rwp = (+robot.wheel_distance_from_center, 0)
+    def simulate_motors(self, l_ts, r_ts):
+        """l_ts, r_ts -> speed [-1..1] where 1 max power forward, 0 no power, -1 max power backward"""
+        ls, rs = self._get_motor_speed()
 
-        lw = body.velocity_at_local_point(lwp).rotated(-body.angle)
-        rw = body.velocity_at_local_point(rwp).rotated(-body.angle)
-    return lw, rw
+        # Current rpm of motor, can be negative if motor turns backward
+        l_rpm = ls / (self.wheel_radius*math.pi) * 60
+        r_rpm = rs / (self.wheel_radius*math.pi) * 60
+        print(l_rpm, r_rpm)
+
+        # If we trying to brake with motor, then torque_rpm acts like we stalled motor
+        # Idk propper calculation for motor braking, so ill go with this
+        
+        # If l_rpm and l_ts both >0 or <0
+        # Else act like we stalled
+        print("rpm", l_rpm, r_rpm)
+        if (l_rpm * l_ts) >= 0:
+            l_torq = self.torque_rpm_func(abs(l_rpm))
+        else:
+            l_torq = self.torque_rpm_func(0)
+            #never()
+        l_torq = l_torq * self.wheel_radius * l_ts
+
+        if (r_rpm * r_ts) >= 0:
+            r_torq = self.torque_rpm_func(abs(r_rpm))
+        else:
+            r_torq = self.torque_rpm_func(0)
+            #never()
+        r_torq = r_torq * self.wheel_radius * r_ts
+        print("torq", l_torq, r_torq)
+
+        self._apply_motor_force(l_torq, r_torq)
+
+    def _get_motor_speed(self):
+        lwp = (-self.wheel_distance_from_center, 0)
+        rwp = (+self.wheel_distance_from_center, 0)
+
+        #TODO unsure about this func, check me
+        lw = self.body.velocity_at_local_point(lwp).rotated(-self.body.angle)
+        rw = self.body.velocity_at_local_point(rwp).rotated(-self.body.angle)
+        return lw.y, rw.y
 
     def _apply_motor_force(self, l, r):
         x = self.wheel_distance_from_center

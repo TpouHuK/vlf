@@ -1,2 +1,2 @@
-* Undertand why empty `__init__.py` in tests/ needed for pytest to work.
-* Move vlf/ into src/vlf.
+* [HIGH PRIORITY] Fix getting speed for motors
+* Properly package this and make normal tests
