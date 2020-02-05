@@ -34,7 +34,7 @@ def test_movement():
     robot = vlf.engine.Robot()
     
     field.add(robot)
-    robot._apply_motor_force(10, 10)
+    robot.simulate_motors(10, 10)
 
     first_pos = robot.body.position
     # First step sets velocity
@@ -46,3 +46,19 @@ def test_movement():
 
     assert first_pos == second_pos #This assert fails if apply_impulse used in motors
     assert first_pos != third_pos
+
+def test_continuos_motor_power():
+    field = vlf.engine.Field()
+    robot = vlf.engine.Robot()
+    
+    field.add(robot)
+    last_angle = robot.body.angle
+    robot.simulate_motors(0, 1)
+    field.step(0.1)
+
+    for i in range(100):
+        robot.simulate_motors(0, 1)
+        field.step(0.1)
+        # Turning left, angle increases
+        assert last_angle < robot.body.angle
+        last_angle = robot.body.angle
