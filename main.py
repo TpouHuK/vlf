@@ -14,7 +14,7 @@ field.add(robot)
 field.step(1)
 field.step(1)
 
-vis = vlf.visualise.Visualisator(fps=FPS)
+#vis = vlf.visualise.Visualisator(fps=FPS)
 
 def limit_velocity(body, gravity, damping, dt):
     vel = body.velocity.rotated(-body.angle)
@@ -28,7 +28,14 @@ def limit_velocity(body, gravity, damping, dt):
 
 robot.body.velocity_func = limit_velocity
 robot.body.position = (400, 300)
+x = field.space.shape_query(pymunk.Circle(None, 5))
+sqi = x[0]
+shape = sqi[0]
+polyset = sqi[1]
+print(polyset.normal)
+print(polyset.points)
 
+exit()
 for i in range(TICKS):
     robot.simulate_motors(0.3, 1)
     field.step(1/FPS)
