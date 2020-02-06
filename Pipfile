@@ -9,6 +9,8 @@ verify_ssl = true
 pytest = "*"
 pymunk = "*"
 pygame = "*"
+pillow = "*"
+numpy = "*"
 
 [requires]
 python_version = "3.7"
