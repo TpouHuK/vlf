@@ -1,3 +1,4 @@
+# AM I USING GIT TO CONTROL FILE VERSION? NOOO
 import vlf
 import vlf.engine as e
 import math
@@ -47,7 +48,11 @@ for i in range(TICKS):
 
     if robot.body.position.get_dist_sqrd(checkpoints.ch_list[cur_checkpoint]) < 10**2:
         cur_checkpoint = (cur_checkpoint + 1) % len(checkpoints.ch_list)
-        print("PROGRESS:", int(checkpoints.distances_acc[cur_checkpoint]/checkpoints.full_dist*100), "%")
+        prog = int(checkpoints.distances_acc[cur_checkpoint]/checkpoints.full_dist*100)
+        print("PROGRESS:", prog, "%")
+        #if prog == 100:
+            #print("FINISHED")
+            #break
 
     field.step(0.01)
     sensor_values = [sample_field.get_mean_from_point(pos)
@@ -61,7 +66,7 @@ for i in range(TICKS):
         pid = -0.5
     robot.simulate_motors(0.5-pid, 0.5+pid)
 
-    vis.draw_space(field)
+    #vis.draw_space(field)
     #vis.wait()
 
 print("Finished")

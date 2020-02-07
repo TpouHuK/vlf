@@ -1,5 +1,4 @@
 from pymunk.vec2d import Vec2d
-from itertools import accumulate
 ch_list = [
 Vec2d(19.14378637881105, 53.86213006204827),
 Vec2d(26.41227323657218, 39.126426514836055),
@@ -67,7 +66,7 @@ Vec2d(24.359567660499845, 43.67122642196494),
 #Vec2d(51.53124722139574, 18.37578356531889),
 #Vec2d(71.5019462379668, 19.10870211465833),
 ]
-distances_parts = [a.get_distance(b) for a, b in zip(ch_list, ch_list[1:])]
-distances_parts.insert(0, 0)
-distances_acc = list(accumulate(distances_parts))
-full_dist = sum(distances_parts)
+#distances_parts = [a.get_distance(b) for a, b in zip(ch_list, ch_list[1:])]
+#distances_parts.insert(0, 0)
+#distances_acc = list(accumulate(distances_parts))
+#full_dist = sum(distances_parts)

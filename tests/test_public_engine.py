@@ -60,5 +60,6 @@ def test_continuos_motor_power():
         robot.simulate_motors(0, 1)
         field.step(0.1)
         # Turning left, angle increases
-        assert last_angle < robot.body.angle
+        # UPD Feb7: nope, angle decreases
+        assert last_angle > robot.body.angle
         last_angle = robot.body.angle

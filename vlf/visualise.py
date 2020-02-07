@@ -28,5 +28,5 @@ class Visualisator:
         self.screen.fill((255,255,255))
         if self.image:
             self.screen.blit(self.image, (0,0))
-        field.space.debug_draw(self.draw_options)
+            field.space.debug_draw(self.draw_options)
         pygame.display.flip()
