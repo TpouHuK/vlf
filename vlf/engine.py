@@ -64,8 +64,8 @@ class Robot():
         sensor_size_w=2.5,
         sensor_mass=0.030,
 
-        angular_damping=0.985,
-        velocity_damping=0.99,
+        angular_damping=0.95,
+        velocity_damping=0.95,
         torque_rpm_func=MEDIUM_MOTOR_TORQUE_RPM_CALC,
             ):
 

@@ -4,10 +4,7 @@ class SampleField:
     def __init__(self, image):
 
         pix = np.array(image.convert("L"))
-        print(image.size)
         self.np_img = pix
-        print(pix.shape)
-
         #Size of mask
         #Sample radius
         r = 3
