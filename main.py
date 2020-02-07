@@ -1,11 +1,16 @@
 import vlf
 import vlf.engine as e
 import math
+import numpy as np
 import pymunk
+from PIL import Image, ImageOps
 
-FPS = 30
+
+FPS = 100
 SIMUL_LEN = 10
-TICKS = int(FPS*SIMUL_LEN)
+TICKS = int(FPS*SIMUL_LEN)*100
+#TICKS = 1
+
 
 field = e.Field()
 robot = e.Robot()
@@ -14,7 +19,15 @@ field.add(robot)
 field.step(1)
 field.step(1)
 
-#vis = vlf.visualise.Visualisator(fps=FPS)
+
+vis = vlf.visualise.Visualisator(fps=FPS)
+
+field_image = Image.open("field.png")
+field_image = field_image.resize((300, 160))
+vis.set_image(field_image)
+sample_field = vlf.sensors.SampleField(field_image)
+
+print()
 
 def limit_velocity(body, gravity, damping, dt):
     vel = body.velocity.rotated(-body.angle)
@@ -26,21 +39,31 @@ def limit_velocity(body, gravity, damping, dt):
 
     pymunk.Body.update_velocity(body, gravity, damping, dt)
 
-robot.body.velocity_func = limit_velocity
-robot.body.position = (400, 300)
-x = field.space.shape_query(pymunk.Circle(None, 5))
-sqi = x[0]
-shape = sqi[0]
-polyset = sqi[1]
-print(polyset.normal)
-print(polyset.points)
+robot.body.position = (20, 50)
+#robot.body.position = (280, 140)
+robot.body.angle = math.radians(-155)
 
-exit()
 for i in range(TICKS):
-    robot.simulate_motors(0.3, 1)
-    field.step(1/FPS)
+    field.step(0.01)
+    robot.simulate_motors(0, 0)
+
+    #print(robot.get_sensors_pos())
+    sensor_values = [sample_field.get_mean_from_point(pos)
+            for pos in robot.get_sensors_pos()]
+
+    #print(sensor_values)
+    #print("===")
+
+    pid = (sensor_values[0]+sensor_values[1]) - (sensor_values[2]+sensor_values[3])
+    pid = -pid
+    if pid > 0.2:
+        pid = 0.2
+    if pid < -0.2:
+        pid = -0.2
+    robot.simulate_motors(0.1-pid, 0.1+pid)
+
     vis.draw_space(field)
-    vis.wait()
+    #vis.wait()
 
 print("Finished")
 input()

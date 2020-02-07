@@ -57,8 +57,15 @@ class Robot():
         wheel_mass=0.125,
         wheel_distance_from_center=10,
         wheel_radius=9,
-        angular_damping=0.95,
-        velocity_damping=0.95,
+
+        sensors_forward=13,
+        sensors_interval=0.5,
+        sensor_size_h=2.5,
+        sensor_size_w=2.5,
+        sensor_mass=0.030,
+
+        angular_damping=0.985,
+        velocity_damping=0.99,
         torque_rpm_func=MEDIUM_MOTOR_TORQUE_RPM_CALC,
             ):
 
@@ -87,6 +94,29 @@ class Robot():
                 (0, 0),
                 case_mass)
 
+        half_interval = sensors_interval / 2
+        half_size = sensor_size_w / 2
+        y = sensors_forward
+        x_s = [
+                -half_interval -sensor_size_w -sensors_interval -half_size,
+                -half_interval -half_size,
+                +half_interval +half_size,
+                +half_interval +sensor_size_w +sensors_interval +half_size,
+                ]
+
+        sensor_array = []
+        sensor_pos_array = []
+        s_colors = [(200, 0, 0), (0, 200, 0), (0, 0, 200), (0, 200, 200)]
+        for x, color in zip(x_s, s_colors):
+            box = create_offcentered_box(
+                main_body,
+                sensor_size_w, sensor_size_h,
+                (x, y),
+                sensor_mass)
+            box.color = color
+            sensor_array.append(box)
+            sensor_pos_array.append((x, y))
+
         def kinda_friction(body, gravity, damping, dt):
             vel = body.velocity.rotated(-body.angle)
             vel.x = 0
@@ -97,6 +127,8 @@ class Robot():
 
         main_body.velocity_func = kinda_friction
 
+        self.sensor_array = sensor_array
+        self.sensor_pos_array = sensor_pos_array
         self.left_wheel = left_wheel
         self.right_wheel = right_wheel
         self.case = case
@@ -107,10 +139,16 @@ class Robot():
     @property
     def parts(self):
         """All objects thats need to be added into simulation to create a robot"""
-        return self.left_wheel, self.right_wheel, self.case, self.body
+        return (self.left_wheel, self.right_wheel, self.case, self.body) + tuple(self.sensor_array)
+
+    def get_sensors_pos(self):
+        answ = (self.body.local_to_world(p) for p in self.sensor_pos_array)
+        return tuple(answ)
 
     def simulate_motors(self, l_ts, r_ts):
         """l_ts, r_ts -> speed [-1..1] where 1 max power forward, 0 no power, -1 max power backward"""
+        # Swap because pygame inv Y as for pymunk
+        l_ts, r_ts = r_ts, l_ts
         ls, rs = self._get_motor_speed()
 
         # Current rpm of motor, can be negative if motor turns backward
