@@ -10,13 +10,35 @@ from deap import tools
 import vlf
 import checkpoints
 
+# Total amout of line followers
 POPULATION_SIZE = 10
+
+# Amount of random line followers every day
 NEW_EVERY_DAY = 2
+
+# Amout of removed line followers
 DIES_EVERY_DAY = int(POPULATION_SIZE*0.4)
-ALIVE_EVERY_DAY = POPULATION_SIZE - DIES_EVERY_DAY
+
+# Smaller number -> more weak line followers survive
+# Bigger number -> more strong line followers survive
+# Cant be bigger that POPULATION_SIZE
 DIE_TOURN_SIZE = 3
+
+# Smaller number -> more weak line followers have chance to breed
+# Bigger number -> more strong line followers have chance to breed
+# Cant be bigger that ALIVE_EVERY_DAY
 BREED_TOURN_SIZE = 3
+
+# Amount of mutated line followers every day
+# Cant be bigger that ALIVE_EVERY_DAY
 MUTATED_EVERY_DAY = 2
+
+ALIVE_EVERY_DAY = POPULATION_SIZE - DIES_EVERY_DAY
+
+assert DIE_TOURN_SIZE <= POPULATION_SIZE
+assert BREED_TOURN_SIZE <= ALIVE_EVERY_DAY
+assert MUTATED_EVERY_DAY <= ALIVE_EVERY_DAY
+assert NEW_EVERY_DAY < DIES_EVERY_DAY
 
 brain = vlf.neural_network.FFNeuralNetwork()
 
