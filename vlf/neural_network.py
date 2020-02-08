@@ -5,6 +5,9 @@ import numpy as np
 def sigmoid(Z):
     return 1/(1+np.exp(-Z))
 
+def tanh(z):
+    return (np.exp(z) - np.exp(-z)) / (np.exp(z) + np.exp(-z))
+
 def create_layer(isize, osize):
         weights = np.random.randn(osize, isize)
         biases = np.random.randn(osize, 1)
@@ -20,7 +23,8 @@ def single_layer_forward_propagation(a_prev, w_curr, b_curr):
         #print(b_curr)
         #print("====")
         z_curr = np.dot(w_curr, a_prev) + b_curr
-        return sigmoid(z_curr)
+        #return sigmoid(z_curr)
+        return tanh(z_curr)
 
 def full_forward_propagation(inp, layers):
     a_curr = inp
