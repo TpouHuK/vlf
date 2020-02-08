@@ -6,22 +6,30 @@ def sigmoid(Z):
     return 1/(1+np.exp(-Z))
 
 def create_layer(isize, osize):
-        weights = np.random.randn(osize, isize)*0.1
-        biases = np.random.randn(osize, 1)*0.1
+        weights = np.random.randn(osize, isize)
+        biases = np.random.randn(osize, 1)
         return (weights, biases)
 
 def single_layer_forward_propagation(a_prev, w_curr, b_curr):
+        #print("====")
+        #print("A_PREV")
+        #print(a_prev)
+        #print("W_CURR")
+        #print(w_curr)
+        #print("B_CURR")
+        #print(b_curr)
+        #print("====")
         z_curr = np.dot(w_curr, a_prev) + b_curr
         return sigmoid(z_curr)
 
-def full_forward_propagation(X, layers):
-    A_curr = X
+def full_forward_propagation(inp, layers):
+    a_curr = inp
     
     for layer in layers:
-        A_prev = A_curr
-        W_curr, b_curr = layer
-        A_curr = single_layer_forward_propagation(A_prev, W_curr, b_curr)
-    return A_curr
+        a_prev = a_curr
+        w_curr, b_curr = layer
+        a_curr = single_layer_forward_propagation(a_prev, w_curr, b_curr)
+    return a_curr
 
 class FFNeuralNetwork():
     def __init__(self, input_size=4, output_size=2, hidden_layers=(3,)):

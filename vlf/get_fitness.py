@@ -59,10 +59,22 @@ class Course:
             l, r = rule_func(sensor_values)
             l = max(min(l, 100), -100)
             r = max(min(r, 100), -100)
+
+            #if l < 0:
+                #panic()
+            #if r < 0:
+                #panic()
+            #print(l, r)
+
             robot.simulate_motors(l/100, r/100)
             field.step(self.simulation_step)
             if visualiser:
                 visualiser.draw_space(field)
+            if abs(robot.body.angle) > 50:
+                fitness = (self.distances_until_checkpoint[cur_checkpoint+1]
+                        -robot.body.position.get_distance(self.checkpoints[cur_checkpoint]))
+                assert fitness < self.track_distance
+                break
         else:
             fitness = (self.distances_until_checkpoint[cur_checkpoint+1]
                     -robot.body.position.get_distance(self.checkpoints[cur_checkpoint]))
