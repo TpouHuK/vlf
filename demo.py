@@ -35,8 +35,8 @@ max_score = 0
 for power in range(1, 5):
     for p in range(1, 20):
         for d in range(0, 5, 2):
-            score = c.check_fitness(PD(p/3, d, power*20))
-            #score = c.check_fitness(PD(p/3, d, power*20), visualiser=v)
+            #score = c.check_fitness(PD(p/3, d, power*20))
+            score = c.check_fitness(PD(p/3, d, power*20), visualiser=v)
             if score > max_score:
                 max_score = score
                 max_p = p

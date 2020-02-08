@@ -12,6 +12,7 @@ pygame = "*"
 pillow = "*"
 numpy = "*"
 keras = "*"
+deap = "*"
 
 [requires]
 python_version = "3.7"
