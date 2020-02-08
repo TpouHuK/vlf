@@ -70,19 +70,17 @@ def mutate_brain(a, chance=1/23):
 
 def get_fitness(brain):
     def ride_func(sensors):
-        s = [i/80 for i in sensors]
+        s = [i/30 for i in sensors]
         x, y = brain.get_result(s)
         return (x)*100, (y)*100
 
     return c.check_fitness(ride_func)
-    #return c.check_fitness(ride_func, visualiser=vis)
 
 def show(brain):
-    return
     def ride_func(sensors):
-        s = [i/80 for i in sensors]
+        s = [i/30 for i in sensors]
         x, y = brain.get_result(s)
-        return (x-0.5)*100*2, (y-0.5)*100*2*2
+        return (x)*100, (y)*100
 
     return c.check_fitness(ride_func, visualiser=vis)
 
@@ -127,6 +125,7 @@ while True:
 
     f = [p.fitness for p in population]
     best = max(population, key=lambda x: x.fitness)
+    print(best.get_flattened_array())
     show(best)
     print("GENERATION", g)
     print("MEAN:", sum(f)/len(f))
